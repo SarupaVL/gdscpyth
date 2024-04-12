@@ -1,3 +1,5 @@
+import os
+
 class Task:
     def __init__(self, name, description, assignees, reporters, priority):
         self.name = name
@@ -39,7 +41,6 @@ class KanbanBoard:
                     return True
         return False
             
-
 def main():
     boards = []
 
@@ -62,6 +63,7 @@ def main():
             add_tasks(new_board)
 
         if choice == 2:
+            kb_namee = input("Enter name of the kanban board to be edited: ")
             choicea = 0
             while choicea!=3:
                 print("1. Adding a task")
@@ -69,14 +71,17 @@ def main():
                 print("3. Exit")
                 choicea=int(input("Enter your choice: "))
 
-                kb_namee = input("Enter name of the kanban board to be edited: ")
-
                 for board in boards:
                     if board.name == kb_namee:
                         if choicea == 1:
-                            board.add_task()
+                            add_tasks(board)
                         elif choicea == 2:
-                            board.delete_task()
+                            delete_task_name = input("Enter the name of the task to delete: ")
+                            delete_task_status = input("Enter the status of the task (Todo/Doing/Done): ")
+                            if board.delete_task(delete_task_name, delete_task_status):
+                                print("Task deleted successfully!")
+                            else:
+                                print("Task not found!")
                         elif choicea == 3:
                             break
                         else:
@@ -88,20 +93,32 @@ def main():
         if choice == 3:
             print("Deleting a kanban board...")
             kb_nameee=input("Enter the name of kanban board to be deleted: ")
-            boards.remove("kb_nameee")
+            for board in boards:
+                if board.name == kb_nameee:
+                    boards.remove(board)
+                    print("Kanban board deleted successfully!")
+                    break
+                else:
+                    print("Kanban board not found!")
 
         if choice == 4:
             for board in boards:
+                term_size = os.get_terminal_size()
+                print('=' * term_size.columns)
                 print(board.name)
-                print("Todo:")
+                print('=' * term_size.columns)
+                print("Todo:\n")
                 for task in board.todo:
                     print_task(task)
-                print("Doing:")
+                print('=' * term_size.columns)
+                print("Doing:\n")
                 for task in board.doing:
                     print_task(task)
-                print("Done:")
+                print('=' * term_size.columns)
+                print("Done:\n")
                 for task in board.done:
                     print_task(task)
+                print('=' * term_size.columns)
 
 def add_tasks(board):
     dywc = ""
