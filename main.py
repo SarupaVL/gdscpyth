@@ -55,12 +55,39 @@ class KanbanBoard:
                     self.done.remove(task)
                     return True
         return False
+    
+    def move_task(self, task_name, from_status, to_status):
+        task_to_move = None
+        if from_status == "Todo":
+            for task in self.todo:
+                if task.name == task_name:
+                    task_to_move = task
+                    break
+        elif from_status == "Doing":
+            for task in self.doing:
+                if task.name == task_name:
+                    task_to_move = task
+                    break
+        elif from_status == "Done":
+            for task in self.done:
+                if task.name == task_name:
+                    task_to_move = task
+                    break
+
+        if task_to_move:
+            self.delete_task(task_name, from_status)
+            self.add_task(task_to_move, to_status)
+            return True
+        else:
+            return False
             
 def main():
     boards = []
 
     choice = 0
     while choice != 5:
+
+        print("Welcome to the Kanban Board, ")
 
         msg = "1. Create a new kanban board\n" \
             "2. Edit existing kanban board\n" \
@@ -85,16 +112,17 @@ def main():
             new_board = KanbanBoard(kb_name)
             boards.append(new_board)
 
-            print("Lets add your tasks in their respective boxes!!!")
+            print("\nLets add your tasks in their respective boxes!!!")
             add_tasks(new_board)
 
         if choice == 2:
             kb_namee = input("Enter name of the kanban board to be edited: ")
             choicea = 0
-            while choicea!=3:
+            while choicea != 4:
                 print("1. Adding a task")
                 print("2. Deleting a task")
-                print("3. Exit")
+                print("3. Move task")
+                print("4. Exit")
                 choicea=int(input("Enter your choice: "))
 
                 for board in boards:
@@ -105,16 +133,24 @@ def main():
                             delete_task_name = input("Enter the name of the task to delete: ")
                             delete_task_status = input("Enter the status of the task (Todo/Doing/Done): ")
                             if board.delete_task(delete_task_name, delete_task_status):
-                                print("Task deleted successfully!")
+                                print("Task deleted successfully!\n")
                             else:
-                                print("Task not found!")
+                                print("Task not found!\n")
                         elif choicea == 3:
+                            move_task_name = input("Enter the name of the task to move: ")
+                            from_status = input("Enter the current status of the task (Todo/Doing/Done): ")
+                            to_status = input("Enter the target status to move the task (Todo/Doing/Done): ")
+                            if board.move_task(move_task_name, from_status, to_status):
+                                print("Task moved successfully!\n")
+                            else:
+                                print("Task not found or status not valid!\n")
+                        elif choicea == 4:
                             break
                         else:
-                            print("Invalid choice!")
+                            print("Invalid choice!\n")
                         break
                 else:
-                    print("Kanban board not found!")
+                    print("Kanban board not found!\n")
 
         if choice == 3:
             print("Deleting a kanban board...")
@@ -122,41 +158,40 @@ def main():
             for board in boards:
                 if board.name == kb_nameee:
                     boards.remove(board)
-                    print("Kanban board deleted successfully!")
+                    print("Kanban board deleted successfully!\n")
                     break
                 else:
-                    print("Kanban board not found!")
+                    print("Kanban board not found!\n")
 
         if choice == 4:
-            #print priority wise
             kb_nam=input("Enter the name of kanban board to be printed: ")
             for board in boards:
                 if board.name == kb_nam:
                     term_size = os.get_terminal_size()
                     print('=' * term_size.columns)
-                    print(board.name,"\n")
+                    print('~~~',board.name,"~~~")
                     print('=' * term_size.columns)
 
-                    """ sorted_todo = sorted(board.todo, key=lambda x: x.priority)
+                    sorted_todo = sorted(board.todo, key=lambda x: x.priority)
                     sorted_doing = sorted(board.doing, key=lambda x: x.priority)
-                    sorted_done = sorted(board.done, key=lambda x: x.priority) """
+                    sorted_done = sorted(board.done, key=lambda x: x.priority)
 
                     print("Todo:\n")
-                    for task in board.todo:
+                    for task in sorted_todo:
                         print_task(task)
                     print('=' * term_size.columns)
 
                     print("Doing:\n")
-                    for task in board.doing:
+                    for task in sorted_doing:
                         print_task(task)
                     print('=' * term_size.columns)
 
                     print("Done:\n")
-                    for task in board.done:
+                    for task in sorted_done:
                         print_task(task)
                     print('=' * term_size.columns)
                 else:
-                    print("Kanban board not found!")
+                    print("Kanban board not found!\n")
 
 def add_tasks(board):
     dywc = ""
@@ -166,7 +201,7 @@ def add_tasks(board):
         tdesc = input("Enter task description: ")
         tassi = input("Enter assignees: ")
         trepo = input("Enter reporters: ")
-        tprio = input("Enter priority (high, medium, low): ")
+        tprio = int(input("Enter priority (high-1, medium-2, low-3): "))
 
         new_task = Task(tname, tdesc, tassi, trepo, tprio)
         board.add_task(new_task, tstat)
