@@ -1,8 +1,6 @@
-
-#code to make things look fancy
 import os
+
 def print_msg_box(msg, indent=1, width=None, title=None):
-    """Print message-box with optional title."""
     lines = msg.split('\n')
     space = " " * indent
     if not width:
@@ -94,16 +92,8 @@ def main():
                 "3. Delete a kanban board\n" \
                     "4. Display a kanban board\n" \
                         "5. Exit"
+        print_msg_box(msg=msg, indent=2, title='What do you want to do?\n')
 
-        print_msg_box(msg=msg, indent=2, title='What do you want to do?')
-
-        '''
-        print("1. Create a new kanban board")
-        print("2. Edit existing kanban board")
-        print("3. Delete kanban board")
-        print("4. Display a kanban board")
-        print("5. Exit")
-        '''
         choice = int(input("Enter your choice: "))
 
         if choice == 1:
@@ -165,7 +155,9 @@ def main():
 
         if choice == 4:
             kb_nam=input("Enter the name of kanban board to be printed: ")
+            
             for board in boards:
+
                 if board.name == kb_nam:
                     term_size = os.get_terminal_size()
                     print('=' * term_size.columns)
@@ -190,6 +182,7 @@ def main():
                     for task in sorted_done:
                         print_task(task)
                     print('=' * term_size.columns)
+
                 else:
                     print("Kanban board not found!\n")
 
