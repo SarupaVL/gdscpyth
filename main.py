@@ -1,4 +1,19 @@
+
+#code to make things look fancy
 import os
+def print_msg_box(msg, indent=1, width=None, title=None):
+    """Print message-box with optional title."""
+    lines = msg.split('\n')
+    space = " " * indent
+    if not width:
+        width = max(map(len, lines))
+    box = f'╔{"═" * (width + indent * 2)}╗\n'
+    if title:
+        box += f'║{space}{title:<{width}}{space}║\n'
+        box += f'║{space}{"-" * len(title):<{width}}{space}║\n'
+    box += ''.join([f'║{space}{line:<{width}}{space}║\n' for line in lines])
+    box += f'╚{"═" * (width + indent * 2)}╝'
+    print(box)
 
 class Task:
     def __init__(self, name, description, assignees, reporters, priority):
@@ -46,11 +61,22 @@ def main():
 
     choice = 0
     while choice != 5:
+
+        msg = "1. Create a new kanban board\n" \
+            "2. Edit existing kanban board\n" \
+                "3. Delete a kanban board\n" \
+                    "4. Display a kanban board\n" \
+                        "5. Exit"
+
+        print_msg_box(msg=msg, indent=2, title='What do you want to do?')
+
+        '''
         print("1. Create a new kanban board")
         print("2. Edit existing kanban board")
         print("3. Delete kanban board")
         print("4. Display a kanban board")
         print("5. Exit")
+        '''
         choice = int(input("Enter your choice: "))
 
         if choice == 1:
@@ -102,23 +128,35 @@ def main():
                     print("Kanban board not found!")
 
         if choice == 4:
+            #print priority wise
+            kb_nam=input("Enter the name of kanban board to be printed: ")
             for board in boards:
-                term_size = os.get_terminal_size()
-                print('=' * term_size.columns)
-                print(board.name)
-                print('=' * term_size.columns)
-                print("Todo:\n")
-                for task in board.todo:
-                    print_task(task)
-                print('=' * term_size.columns)
-                print("Doing:\n")
-                for task in board.doing:
-                    print_task(task)
-                print('=' * term_size.columns)
-                print("Done:\n")
-                for task in board.done:
-                    print_task(task)
-                print('=' * term_size.columns)
+                if board.name == kb_nam:
+                    term_size = os.get_terminal_size()
+                    print('=' * term_size.columns)
+                    print(board.name,"\n")
+                    print('=' * term_size.columns)
+
+                    """ sorted_todo = sorted(board.todo, key=lambda x: x.priority)
+                    sorted_doing = sorted(board.doing, key=lambda x: x.priority)
+                    sorted_done = sorted(board.done, key=lambda x: x.priority) """
+
+                    print("Todo:\n")
+                    for task in board.todo:
+                        print_task(task)
+                    print('=' * term_size.columns)
+
+                    print("Doing:\n")
+                    for task in board.doing:
+                        print_task(task)
+                    print('=' * term_size.columns)
+
+                    print("Done:\n")
+                    for task in board.done:
+                        print_task(task)
+                    print('=' * term_size.columns)
+                else:
+                    print("Kanban board not found!")
 
 def add_tasks(board):
     dywc = ""
